@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const bcryptjs = require('bcryptjs');
-const config = require('./config.json')
+const config = require('./config.json');
+const product = require('./products.json')
 
 const port = 3000;
 
@@ -25,6 +26,32 @@ db.once('open', function() {
 });
 
 
-app.get('/', (req, res) => res.send('Bruh'))
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+app.use((req,res,next) =>{
+  console.log(`${req.method} request for ${req.url}`);
+  next();
+});
+
+app.get('/', (req, res) => res.send('Bruh'));
+
+app.get('/allProducts', (req,res)=>{
+  res.json(product);
+});
+
+
+app.get('/products/p=:id', (req,res)=>{
+  const idParam = req.params.id;
+
+  for (let i=0; i < product.length; i++){
+
+    if (idParam.toString() === product[i].id.toString()) {
+      res.json(product[i]);
+    } 
+  }
+})
+
+
+
+
+
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
