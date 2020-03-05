@@ -8,6 +8,7 @@ const config = require('./config.json');
 const product = require('./products.json');
 const dbProduct = require('./models/products.js');
 const User = require('./models/users.js');
+const Product = require('./models/products.js');
 
 const port = 3000;
 
@@ -104,6 +105,75 @@ app.post('/loginUser', (req,res)=>{
     } //outer if statement
   }); //findOne
 }); //post
+
+
+
+//register product
+app.post('/registerProduct', (req,res)=>{
+
+  Product.findOne({name:req.body.name},(err,productResult)=>{
+    if (productResult) {
+      res.send('no')
+    } else {
+      const productData = new Product({
+        _id : new mongoose.Types.ObjectId,
+        name : req.body.name,
+        last_name : req.body.last_name,
+        price : req.body.price
+      });
+
+      productData.save().then(result =>{
+        res.send(result);
+      }).catch(err => res.send(err))
+    }
+  })
+
+});
+
+
+//Search for price
+app.post('/searchProduct', (req,res)=>{
+  Product.findOne({name:req.body.name}, (err,productResult)=>{
+    if (productResult) {
+      res.send(productResult);
+    } else {
+      res.send('Product not found. Please eat something else');
+    } //if statement
+  }); //findOne
+}); //post
+
+
+//delete a product
+app.delete('/deleteProduct/:id', (req,res)=>{
+  const idParam = req.params.id;
+  Product.findOne({_id:idParam}, (err,product)=>{
+    if (product) {
+      Product.deleteOne({_id:idParam},err=>{
+        res.send('deleted');
+      });
+    } else {
+      res.send('not found');
+    }
+  }).catch(err=> res.send(err));//findOne
+}); //delete
+
+
+//update a product
+app.patch('/updateProduct/:id',(res,req)=>{
+  const idParam = req.params.id;
+  Product.findById(idParam,(err,product)=>{
+    const updatedProduct ={
+      name: req.body.name,
+      last_name: req.body.last_name,
+      price: req.body.price
+    };
+    Product.updateOne({_id:idParam}, updatedProduct).then(result=>{
+      res.send(result);
+    }).catch(err=>res.send(err));
+
+  }).catch(err=>res.send('not found'));
+
+});
 
 
 //keep this always at the bottom so that you can see the errors reported
