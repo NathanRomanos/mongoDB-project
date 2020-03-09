@@ -130,6 +130,13 @@ app.post('/registerProduct', (req,res)=>{
 
 });
 
+//get all users
+app.get('/allProducts', (req,res)=>{
+  Product.find().then(result =>{
+    res.send(result);
+  })
+});
+
 
 //Search for price
 app.post('/searchProduct', (req,res)=>{
