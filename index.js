@@ -119,7 +119,8 @@ app.post('/registerProduct', (req,res)=>{
         _id : new mongoose.Types.ObjectId,
         name : req.body.name,
         last_name : req.body.last_name,
-        price : req.body.price
+        price : req.body.price,
+        user_id : req.body.user_id
       });
 
       productData.save().then(result =>{
@@ -131,7 +132,7 @@ app.post('/registerProduct', (req,res)=>{
 });
 
 //get all users
-app.get('/allProducts', (req,res)=>{
+app.get('/allProductsFromDB', (req,res)=>{
   Product.find().then(result =>{
     res.send(result);
   })
@@ -166,7 +167,7 @@ app.delete('/deleteProduct/:id', (req,res)=>{
 
 
 //update a product
-app.patch('/updateProduct/:id',(res,req)=>{
+app.patch('/updateProduct/:id',(req,res)=>{
   const idParam = req.params.id;
   Product.findById(idParam,(err,product)=>{
     const updatedProduct ={
